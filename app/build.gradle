@@ -9,9 +9,42 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    // Apply the java-library plugin for API and implementation separation.
+    id 'java-library'
+    //Añado el plugin para eclipse
+    id 'eclipse'
+    //para poder publicar paquetes en github
+    id 'maven-publish'
     
 }
 
+//Para publicar paquetes en github'
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/juamemmen/Junio2023/")
+            credentials {
+            //las propiedades gpr.user y gpr.key est�n configuradas en gradle.properties en el raiz del proyecto, y se a�ade a .gitignore para que no se suban
+            	username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            	
+                }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+         //Del tutorial https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven
+        
+            groupId = 'Junio'
+            artifactId = '2023'
+			version = '1.0.0-juamemmen'
+
+            from components.java
+        }
+       
+    }
+}
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
